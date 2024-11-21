@@ -1,0 +1,82 @@
+﻿@using CoreBlog.Server.Services
+@using CoreBlog.Shared.Storage
+
+@inject IBlog blog
+@inject IBlogStorage storage
+
+<!DOCTYPE html>
+<html lang="@blog.Metadata.Language">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    @if (blog.Metadata.Author is { } author)
+    {
+        <meta name="author" content="@author"/>
+    }
+    @foreach (var meta in blog.Metadata.AdditionalPageMeta)
+    {
+        <meta name="@meta.Key" content="@meta.Value"/>
+    }
+    <base href="/"/>
+    <RadzenTheme Theme="@GetTheme()"/>
+    <link rel="stylesheet" href="@Assets["app.css"]"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+          rel="stylesheet">
+    <HeadOutlet/>
+
+    @if (storage.GetAssetUrl("favicon.ico") is { } favicon)
+    {
+        <link rel="icon" href="@favicon"/>
+    }
+</head>
+
+<body>
+<Routes/>
+</body>
+
+<style>
+    :root {
+        --rz-text-font-family: @blog.Metadata.FontFamily;
+    }
+</style>
+
+</html>
+
+@code{
+
+    [CascadingParameter] HttpContext? HttpContext { get; set; }
+
+    private string GetTheme()
+    {
+        var theme = blog.Metadata.Theme;
+
+        // if (HttpContext is not null)
+        // {
+        //     var mode = HttpContext.Request.Query["m"];
+        //
+        //     if (!string.IsNullOrEmpty(mode))
+        //     {
+        //         if (theme.EndsWith("dark"))
+        //         {
+        //             if (mode == "light")
+        //             {
+        //                 theme = theme.Split('-')[0];
+        //             }
+        //         }
+        //         else
+        //         {
+        //             if (mode == "dark")
+        //             {
+        //                 theme += "-dark";
+        //             }
+        //         }
+        //     }
+        // }
+
+        return theme;
+    }
+
+}

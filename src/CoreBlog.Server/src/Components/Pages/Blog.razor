@@ -1,0 +1,258 @@
+﻿@page "/"
+
+@using CoreBlog.Server.Resources
+@using CoreBlog.Server.Services
+@using CoreBlog.Shared.Models
+@using CoreBlog.Shared.Storage
+@using FuzzySharp
+@using Microsoft.Extensions.Localization
+
+@inject IBlog blog
+@inject IBlogStorage storage
+@inject NavigationManager navigationManager
+@inject IStringLocalizer<SharedResource> localizer
+@inject ThemeService themeService
+
+<PageTitle>@blog.Metadata.Title</PageTitle>
+
+@if (blog.Metadata.Description is { } description)
+{
+    <HeadContent>
+        <meta name="description" content="@description"/>
+    </HeadContent>
+}
+
+<RadzenStack Gap="3rem">
+    <RadzenStack Gap="1rem">
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem">
+            <RadzenTextBox
+                Value="@Search"
+                Name="searchBox"
+                Placeholder="@localizer["SearchPosts"]"
+                MaxLength="100"
+                Style="width: 100%;"
+                Attributes="@(new Dictionary<string, object>
+                            {
+                                ["onkeydown"] = "if (event.key === 'Enter') navigateToSearch()"
+                            })"/>
+            <button
+                onclick="navigateToSearch()"
+                class="rz-button rz-button-md rz-variant-filled rz-base rz-shade-default rz-button-icon-only">
+                <span class="rz-button-box">
+                    <i class="notranslate rz-button-icon-left rzi">
+                        search
+                    </i>
+                </span>
+            </button>
+        </RadzenStack>
+        @if (!string.IsNullOrEmpty(Search))
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem">
+                <RadzenText Style="overflow: hidden; text-overflow: ellipsis;">
+                    @localizer["ShowingResultsFor", Search]
+                </RadzenText>
+                <a href="@GetSearchUrl(null)" style="text-decoration: none;">
+                    <RadzenIcon Icon="cancel" IconStyle="@GetIconStyle()"/>
+                </a>
+            </RadzenStack>
+        }
+        <RadzenStack Gap="1">
+            <RadzenText>
+                @localizer["Topics"]:
+            </RadzenText>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" Wrap="FlexWrap.Wrap">
+                @foreach (var tag in blog.Tags.OrderByDescending(e => e.Value))
+                {
+                    <a href="@(GetTagUrl(Tag == tag.Key ? null : tag.Key))" style="text-decoration: none;" class="tag">
+                        <RadzenBadge
+                            Variant="Variant.Outlined"
+                            IsPill="true"
+                            BadgeStyle="@GetTagBadgeStyle(tag.Key)"
+                            Shade="Shade.Default">
+                            @tag.Key
+                        </RadzenBadge>
+                    </a>
+                }
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenStack>
+    <RadzenStack Gap="2rem">
+        @foreach (var post in Posts)
+        {
+            <article>
+                <a href="@($"{post.Id}")" style="text-decoration: none;">
+                    <RadzenCard Variant="Variant.Flat">
+                        <RadzenRow RowGap="1rem" Gap="2">
+                            <RadzenColumn
+                                SizeSM="9"
+                                SizeXS="12"
+                                Style="min-height: 250px;">
+                                <RadzenStack Gap="2rem" JustifyContent="JustifyContent.SpaceBetween">
+                                    <RadzenStack Gap="1">
+                                        <RadzenHeading Size="H1" Text="@post.Title"/>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2">
+                                            @post.Summary
+                                        </RadzenText>
+                                    </RadzenStack>
+                                    <RadzenStack Gap="1">
+                                        @if (post.Date is { } date)
+                                        {
+                                            <RadzenText TextStyle="TextStyle.Caption">
+                                                @date.Date.ToShortDateString()
+                                            </RadzenText>
+                                        }
+                                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem"
+                                                     Wrap="FlexWrap.Wrap">
+                                            @foreach (var tag in post.Tags)
+                                            {
+                                                <RadzenBadge
+                                                    Variant="Variant.Outlined"
+                                                    IsPill="true"
+                                                    BadgeStyle="@GetTagBadgeStyle(tag)"
+                                                    Shade="Shade.Default">
+                                                    @tag
+                                                </RadzenBadge>
+                                            }
+                                        </RadzenStack>
+                                    </RadzenStack>
+                                </RadzenStack>
+                            </RadzenColumn>
+                            <RadzenColumn
+                                SizeSM="3"
+                                SizeXS="12">
+                                <RadzenStack Orientation="Orientation.Horizontal"
+                                             JustifyContent="JustifyContent.Center"
+                                             Style="height: 100%;">
+                                    @if (post.Thumbnail is { } thumbnail)
+                                    {
+                                        <RadzenImage
+                                            Path="@storage.GetAssetUrl(thumbnail)"
+                                            Style="width: 160px; height: 100px;"/>
+                                    }
+                                </RadzenStack>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenCard>
+                </a>
+            </article>
+        }
+    </RadzenStack>
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start">
+            @if (Page > 0)
+            {
+                <RadzenLink Path="@GetPrevUrl()">
+                    <RadzenButton ButtonStyle="ButtonStyle.Base">
+                        @localizer["Back"]
+                    </RadzenButton>
+                </RadzenLink>
+            }
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+            @if (HasMore)
+            {
+                <RadzenLink Path="@GetNextUrl()">
+                    <RadzenButton ButtonStyle="ButtonStyle.Base">
+                        @localizer["Next"]
+                    </RadzenButton>
+                </RadzenLink>
+            }
+        </RadzenStack>
+    </RadzenStack>
+</RadzenStack>
+
+<script>
+    function navigateToSearch() {
+        const searchBox = document.getElementById('searchBox');
+
+        const query = encodeURIComponent(searchBox.value.trim());
+
+        if (query) {
+            window.location.href = `/?s=${query}`;
+        }
+    }
+
+</script>
+
+@code {
+
+    bool HasMore { get; set; }
+
+    IList<PostMetadata> Posts { get; set; } = [];
+
+    const int PageSize = 10;
+
+    [SupplyParameterFromQuery(Name = "s")] public string? Search { get; set; }
+
+    [SupplyParameterFromQuery(Name = "t")] public string? Tag { get; set; }
+
+    [SupplyParameterFromQuery(Name = "p")] public int Page { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Page < 0)
+        {
+            Page = 0;
+        }
+
+        var posts = GetPosts().ToList();
+
+        Posts = posts.Skip(Page * PageSize).Take(PageSize).ToList();
+
+        if (posts.Count > (Page + 1) * PageSize)
+        {
+            HasMore = true;
+        }
+    }
+
+    private IconStyle GetIconStyle()
+        => themeService.Theme.EndsWith("dark") ? IconStyle.Light : IconStyle.Dark;
+
+    private BadgeStyle GetTagBadgeStyle(string tag)
+    {
+        if (Tag == tag)
+        {
+            return BadgeStyle.Success;
+        }
+
+        return themeService.Theme.EndsWith("dark") ? BadgeStyle.Light : BadgeStyle.Dark;
+    }
+
+    private string GetSearchUrl(string? search)
+        => navigationManager.GetUriWithQueryParameter("s", search);
+
+    private string GetTagUrl(string? tag)
+        => navigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
+        {
+            ["p"] = null,
+            ["t"] = tag
+        });
+
+    private string GetNextUrl()
+        => navigationManager.GetUriWithQueryParameter("p", Page + 1);
+
+    private string GetPrevUrl()
+        => navigationManager.GetUriWithQueryParameter("p", Page is 1 ? null : Page - 1);
+
+    private IEnumerable<PostMetadata> GetPosts()
+    {
+        var posts = blog.Posts.Where(p => p is { Hidden: false, Published: true });
+
+        if (!string.IsNullOrEmpty(Tag))
+        {
+            posts = posts.Where(p => p.Tags.Contains(Tag));
+        }
+
+        if (!string.IsNullOrEmpty(Search))
+        {
+            posts = posts.OrderByDescending(p => Fuzz.PartialTokenSetRatio(Search, p.Title));
+        }
+        else
+        {
+            posts = posts.OrderByDescending(p => p.Date);
+        }
+
+        return posts;
+    }
+
+}

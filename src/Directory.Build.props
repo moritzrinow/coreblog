@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <Copyright>Copyright © 2024 Moritz Rinow</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/moritzrinow/coreblog</RepositoryUrl>
+    <RepositoryBranch>main</RepositoryBranch>
+    <IsPackable>false</IsPackable>
+    <LangVersion>13</LangVersion>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

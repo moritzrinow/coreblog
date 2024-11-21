@@ -1,0 +1,44 @@
+# ASP.NET Core-specific files
+**/bin/
+**/obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Dependency and build files
+node_modules/
+bower_components/
+jspm_packages/
+
+# Logs and temporary files
+*.log
+*.tlog
+*.idb
+.vs/
+.idea/
+*.db
+
+# Docker artifacts
+Dockerfile.*
+docker-compose.*
+
+# Secrets and sensitive files
+.env
+*.key
+*.pfx
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+
+# OS and IDE-generated files
+*.DS_Store
+*.Thumbs.db
+desktop.ini

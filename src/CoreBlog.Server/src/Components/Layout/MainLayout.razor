@@ -1,0 +1,85 @@
+﻿@using CoreBlog.Server.Resources
+@using CoreBlog.Server.Services
+@using Microsoft.Extensions.Localization
+
+@inherits LayoutComponentBase
+
+@inject IBlog blog
+@inject IStringLocalizer<SharedResource> localizer
+
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenRow Gap="0" Style="height: 100%;">
+            <RadzenColumn
+                SizeLG="4"
+                SizeSM="3"
+                SizeXS="0">
+            </RadzenColumn>
+            <RadzenColumn
+                SizeLG="4"
+                SizeSM="6"
+                SizeXS="12">
+                <RadzenStack
+                    Orientation="Orientation.Horizontal"
+                    AlignItems="AlignItems.Center"
+                    JustifyContent="JustifyContent.SpaceEvenly"
+                    Style="height: 100%;">
+                    <RadzenLink Path="">
+                        <RadzenText
+                            TextStyle="TextStyle.Button"
+                            TextAlign="TextAlign.Center">
+                            @localizer["Blog"]
+                        </RadzenText>
+                    </RadzenLink>
+                    @if (blog.Posts.Any(p => p is { Id: "welcome", Published: true }))
+                    {
+                        <RadzenLink Path="welcome">
+                            <RadzenText
+                                TextStyle="TextStyle.Button"
+                                TextAlign="TextAlign.Center">
+                                @localizer["Welcome"]
+                            </RadzenText>
+                        </RadzenLink>
+                    }
+                    @if (blog.Metadata.Homepage is { } homepage)
+                    {
+                        <RadzenLink Path="@homepage">
+                            <RadzenText
+                                TextStyle="TextStyle.Button"
+                                TextAlign="TextAlign.Center">
+                                @localizer["AboutMe"]
+                            </RadzenText>
+                        </RadzenLink>
+                    }
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn
+                SizeLG="4"
+                SizeSM="3"
+                SizeXS="0">
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenHeader>
+    <RadzenBody>
+        <RadzenRow Gap="0">
+            <RadzenColumn
+                SizeLG="4"
+                SizeSM="3"
+                SizeXS="0">
+            </RadzenColumn>
+            <RadzenColumn
+                SizeLG="4"
+                SizeSM="6"
+                SizeXS="12">
+                @Body
+            </RadzenColumn>
+            <RadzenColumn
+                SizeLG="4"
+                SizeSM="3"
+                SizeXS="0">
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenBody>
+    <RadzenFooter>
+    </RadzenFooter>
+</RadzenLayout>

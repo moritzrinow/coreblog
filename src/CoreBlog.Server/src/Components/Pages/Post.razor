@@ -1,0 +1,56 @@
+﻿@page "/{Slug}"
+
+@using CoreBlog.Server.Services
+@using CoreBlog.Shared.Models
+@using CoreBlog.Shared.Storage
+
+@inject IBlog blog
+@inject IPostContentService postContentService
+@inject IBlogStorage storage
+
+@if (PostMetadata is null)
+{
+    <p>Post not found</p>
+}
+else
+{
+    <PageTitle>@PostMetadata.Title</PageTitle>
+
+    <article lang="@PostMetadata.Language">
+        <RadzenHeading Text="@PostMetadata.Title"/>
+        <RadzenStack Gap="1rem">
+            @if (PostMetadata.Date is { } date)
+            {
+                <RadzenText TextStyle="TextStyle.Caption">
+                    @date.Date.ToShortDateString()
+                </RadzenText>
+            }
+            @if (PostMetadata.Thumbnail is { } thumbnail && storage.GetAssetUrl(thumbnail) is { } thumbnailUrl)
+            {
+                <RadzenImage
+                    Path="@thumbnailUrl"/>
+            }
+        </RadzenStack>
+        @PostContent
+    </article>
+}
+
+@code {
+
+    PostMetadata? PostMetadata { get; set; }
+
+    MarkupString? PostContent { get; set; }
+
+    [Parameter] public string Slug { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        PostMetadata = blog.Posts.FirstOrDefault(e => e.Id == Slug);
+
+        if (PostMetadata is not null)
+        {
+            PostContent = await postContentService.GetPostContentAsync(Slug);
+        }
+    }
+
+}

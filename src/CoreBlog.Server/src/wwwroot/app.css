@@ -1,0 +1,27 @@
+:root {
+  --rz-text-font-family: Roboto, sans-serif;
+}
+
+pre {
+  overflow-x: auto;
+}
+
+img {
+  max-width: 100%;
+}
+
+.tag {
+  transition: transform 0.1s ease;
+}
+
+.tag:hover {
+  transform: scale(1.05);
+}
+
+.blog-post {
+  transition: transform 0.3s ease;
+}
+
+.blog-post:hover {
+  transform: translateY(-5px);
+}
