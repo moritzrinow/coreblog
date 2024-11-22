@@ -35,4 +35,7 @@
   <data name="Topics" xml:space="preserve">
     <value>Temas</value>
   </data>
+  <data name="PostNotFound" xml:space="preserve">
+    <value>Este puesto no existe...</value>
+  </data>
 </root>

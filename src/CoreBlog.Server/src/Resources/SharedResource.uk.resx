@@ -35,4 +35,7 @@
   <data name="Topics" xml:space="preserve">
     <value>Теми</value>
   </data>
+  <data name="PostNotFound" xml:space="preserve">
+    <value>Такої посади не існує...</value>
+  </data>
 </root>

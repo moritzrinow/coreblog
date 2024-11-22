@@ -1,16 +1,23 @@
 ﻿@page "/{Slug}"
 
+@using CoreBlog.Server.Resources
 @using CoreBlog.Server.Services
 @using CoreBlog.Shared.Models
 @using CoreBlog.Shared.Storage
+@using Microsoft.Extensions.Localization
 
 @inject IBlog blog
 @inject IPostContentService postContentService
 @inject IBlogStorage storage
+@inject IStringLocalizer<SharedResource> localizer
 
 @if (PostMetadata is null)
 {
-    <p>Post not found</p>
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
+        <RadzenText>
+            @localizer["PostNotFound"]
+        </RadzenText>
+    </RadzenStack>
 }
 else
 {
@@ -45,7 +52,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        PostMetadata = blog.Posts.FirstOrDefault(e => e.Id == Slug);
+        PostMetadata = blog.Posts.FirstOrDefault(e => e.Id == Slug && e.Published);
 
         if (PostMetadata is not null)
         {
