@@ -1,3 +1,7 @@
+# v0.1.2
+
+- Improvement: Provide 'og' HTML meta tags for a better link-preview experience in other tools
+
 # v0.1.1
 
 - Fix: Posts marked with `published=false` were correctly unlisted, but still available via their URL
