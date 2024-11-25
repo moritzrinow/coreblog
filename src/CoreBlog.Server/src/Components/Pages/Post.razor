@@ -27,6 +27,10 @@ else
         <meta name="og:title" content="@PostMetadata.Title"/>
         <meta name="og:description" content="@PostMetadata.Summary"/>
         <meta name="description" content="@PostMetadata.Summary"/>
+        @if (PostMetadata.Thumbnail is { } thumbnail && storage.GetAssetUrl(thumbnail) is { } thumbnailUrl)
+        {
+            <meta name="og:image" content="@thumbnailUrl"/>
+        }
     </HeadContent>
 
     <article lang="@PostMetadata.Language">
@@ -40,10 +44,6 @@ else
             }
             @if (PostMetadata.Thumbnail is { } thumbnail && storage.GetAssetUrl(thumbnail) is { } thumbnailUrl)
             {
-                <HeadContent>
-                    <meta name="og:image" content="@thumbnailUrl"/>
-                </HeadContent>
-
                 <RadzenImage
                     Path="@thumbnailUrl"/>
             }
