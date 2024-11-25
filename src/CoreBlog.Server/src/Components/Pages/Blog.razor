@@ -15,10 +15,15 @@
 
 <PageTitle>@blog.Metadata.Title</PageTitle>
 
+<HeadContent>
+    <meta name="og:title" content="@blog.Metadata.Title"/>
+</HeadContent>
+
 @if (blog.Metadata.Description is { } description)
 {
     <HeadContent>
         <meta name="description" content="@description"/>
+        <meta name="og:description" content="@description"/>
     </HeadContent>
 }
 
