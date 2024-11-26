@@ -7,6 +7,7 @@ using CoreBlog.Server.Options;
 using CoreBlog.Server.Services;
 using CoreBlog.Shared.Storage;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Options;
@@ -45,6 +46,15 @@ builder.Services.AddOptions<ConsoleLoggerOptions>()
     console.FormatterName = options.Value.SimpleLogFormatter ? ConsoleFormatterNames.Simple : ConsoleFormatterNames.Json;
   });
 
+builder.Services.AddOptions<ForwardedHeadersOptions>()
+  .Configure<IOptions<ServerOptions>>((headers, options) =>
+  {
+    headers.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
+    headers.KnownNetworks.Clear();
+    headers.KnownProxies.Clear();
+    headers.ForwardLimit = options.Value.ForwardedForLimit;
+  });
+
 builder.Services.AddRazorComponents();
 
 builder.Services.AddRadzenComponents();
@@ -72,6 +82,8 @@ builder.Services.AddSingleton<IBlog>(provider => provider.GetRequiredService<Blo
 builder.Services.AddSingleton<AssetLinkRewriter>();
 
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
 {

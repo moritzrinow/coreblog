@@ -31,4 +31,9 @@ public record ServerOptions
   /// Whether all existing posts are considered published.
   /// </summary>
   public bool AutoPublish { get; set; }
+
+  /// <summary>
+  /// Limit of forwarded-for entries.
+  /// </summary>
+  public int ForwardedForLimit { get; set; } = 1;
 }
