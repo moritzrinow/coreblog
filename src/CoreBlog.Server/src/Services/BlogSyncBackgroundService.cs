@@ -56,6 +56,11 @@ public class BlogSyncBackgroundService(
     await foreach (var post in storage.GetPostsAsync(cancellationToken).ConfigureAwait(false))
     {
       posts.Add(post);
+
+      if (options.Value.AutoPublish)
+      {
+        post.Published = true;
+      }
     }
 
     blog.Posts = posts;

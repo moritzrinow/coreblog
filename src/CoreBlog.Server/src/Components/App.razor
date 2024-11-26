@@ -18,7 +18,7 @@
     {
         <meta name="@meta.Key" content="@meta.Value"/>
     }
-    <base href="/"/>
+    <base href="@(HttpContext?.Request.PathBase == PathString.Empty ? "/" : HttpContext?.Request.PathBase)"/>
     <RadzenTheme Theme="@GetTheme()"/>
     <link rel="stylesheet" href="@Assets["app.css"]"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -14,6 +14,7 @@ Demo: https://coreblog-demo.moritzrinow.com
 - ✅ Allows embedding assets in posts
 - ✅ Docker image
 - ✅ Mobile friendly
+- ✅ RSS Feed
 - ❌ Sadly no custom UI to edit the blog yet (planned for the future)
   - See [Manage your blog with Terraform](#manage-your-blog-with-terraform)
 - ❌ No real-time blog/post updates (data is pulled in intervals)
@@ -182,7 +183,7 @@ To include assets in your blog-post Markdown, use relative links prefixed with `
 
 ```markdown
 The following is an image from my assets bucket:
-[My Image](assets/my-image.png)
+![My Image](assets/my-image.png)
 ```
 
 Links starting with `assets/` will be rewritten to point to the S3 asset-bucket directly.

@@ -6,6 +6,7 @@ using Markdig;
 using Markdig.Renderers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using Radzen;
 using Shared.Storage;
 
 public class AssetLinkRewriter(IBlogStorage storage) : IMarkdownExtension
@@ -28,7 +29,7 @@ public class AssetLinkRewriter(IBlogStorage storage) : IMarkdownExtension
         continue;
       }
 
-      var assetName = link.Url.Split('/').LastOrDefault();
+      var assetName = link.Url.ReplaceFirst("assets/", string.Empty);
 
       if (assetName is null)
       {

@@ -1,10 +1,13 @@
 // Copyright (c) 2024 Moritz Rinow. All rights reserved.
 
 using System.Globalization;
+using System.Text;
 using CoreBlog.Server.Components;
 using CoreBlog.Server.Options;
 using CoreBlog.Server.Services;
 using CoreBlog.Shared.Storage;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Options;
 using Radzen;
@@ -56,7 +59,11 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton<IPostContentService, PostContentService>();
 
+builder.Services.AddSingleton<IRssFeedProvider, RssFeedProvider>();
+
 builder.Services.AddHostedService<BlogSyncBackgroundService>();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton(new Blog());
 
@@ -85,6 +92,29 @@ app.Use((ctx, next) =>
 
 app.UseAntiforgery();
 
+app.MapGet("/feed/{tag?}", async (
+  string? tag,
+  HttpContext ctx,
+  [FromServices] IRssFeedProvider provider,
+  CancellationToken cancellationToken) =>
+{
+  var uri = UriHelper.BuildAbsolute(
+    ctx.Request.Scheme,
+    ctx.Request.Host,
+    ctx.Request.PathBase);
+
+  var feed = provider.CreateFeed(uri, tag);
+
+  await ctx.Response.WriteAsync(feed, Encoding.UTF8, cancellationToken).ConfigureAwait(false);
+});
+
 app.MapRazorComponents<App>();
+
+app.MapFallback(ctx =>
+{
+  ctx.Response.Redirect("/");
+
+  return Task.CompletedTask;
+});
 
 app.Run();

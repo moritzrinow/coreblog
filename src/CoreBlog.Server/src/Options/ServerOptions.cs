@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 Moritz Rinow. All rights reserved.
+// Copyright (c) 2024 Moritz Rinow. All rights reserved.
 
 namespace CoreBlog.Server.Options;
 
@@ -26,4 +26,9 @@ public record ServerOptions
   /// Useful for local development purposes.
   /// </summary>
   public bool SimpleLogFormatter { get; set; }
+
+  /// <summary>
+  /// Whether all existing posts are considered published.
+  /// </summary>
+  public bool AutoPublish { get; set; }
 }
