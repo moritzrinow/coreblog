@@ -73,6 +73,13 @@ builder.Services.AddSingleton<AssetLinkRewriter>();
 
 var app = builder.Build();
 
+var pathBase = builder.Configuration.GetValue<string?>(nameof(ServerOptions.PathBase));
+
+if (!string.IsNullOrEmpty(pathBase))
+{
+  app.UsePathBase(pathBase);
+}
+
 if (!app.Environment.IsDevelopment())
 {
 }

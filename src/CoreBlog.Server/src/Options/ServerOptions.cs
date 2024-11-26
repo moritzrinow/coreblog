@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Moritz Rinow. All rights reserved.
+﻿// Copyright (c) 2024 Moritz Rinow. All rights reserved.
 
 namespace CoreBlog.Server.Options;
 
@@ -31,4 +31,9 @@ public record ServerOptions
   /// Whether all existing posts are considered published.
   /// </summary>
   public bool AutoPublish { get; set; }
+
+  /// <summary>
+  /// Path-base for the blog when hosted on a different sub-path.
+  /// </summary>
+  public string? PathBase { get; set; }
 }
