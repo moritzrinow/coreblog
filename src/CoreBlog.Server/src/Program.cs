@@ -49,7 +49,7 @@ builder.Services.AddOptions<ConsoleLoggerOptions>()
 builder.Services.AddOptions<ForwardedHeadersOptions>()
   .Configure<IOptions<ServerOptions>>((headers, options) =>
   {
-    headers.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
+    headers.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor;
     headers.KnownNetworks.Clear();
     headers.KnownProxies.Clear();
     headers.ForwardLimit = options.Value.ForwardedForLimit;
