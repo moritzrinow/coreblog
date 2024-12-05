@@ -5,6 +5,9 @@ All you need is an S3 bucket.
 
 Demo: https://coreblog-demo.moritzrinow.com
 
+> [!WARNING]
+> This project is still in the early alpha phase. Breaking changes might be introduced any time until version 1.0.0.
+
 - ✅ Multiple themes including dark and white modes
 - ✅ Supports multiple languages including `en`, `de`, `es`, `it`, `fr`, `uk`, `ru`
 - ✅ SEO friendly
@@ -111,6 +114,7 @@ The S3 bucket stores 3 different kind of files:
   "language": "en",
   // Controls language of UI elements
   "fontFamily": "Roboto Mono",
+  "lineHeight": 2.0,
   "additionalPageMeta": {
     // You can use this to perform things like Google site verifications
   }

@@ -40,6 +40,11 @@ public record BlogMetadata
   public string FontFamily { get; set; } = "Roboto, sans-serif";
 
   /// <summary>
+  /// Line-height for every text.
+  /// </summary>
+  public double LineHeight { get; set; } = 2.0;
+
+  /// <summary>
   /// Additional meta elements added to the HTML `head`.
   /// </summary>
   public Dictionary<string, string> AdditionalPageMeta { get; set; } = [];

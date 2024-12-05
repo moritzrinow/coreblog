@@ -52,7 +52,29 @@ else
     </article>
 }
 
+<style>
+    pre {
+        background-color: @(GetCodeBackgroundColor());
+        padding: 2px 4px;
+        border-radius: 4px;
+        overflow-x: auto;
+    }
+
+    code {
+        background-color: @(GetCodeBackgroundColor());
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+
+    pre code {
+        background-color: transparent;
+    }
+</style>
+
 @code {
+
+    private string GetCodeBackgroundColor()
+        => blog.Metadata.Theme.EndsWith("dark") ? "var(--rz-base-600)" : "var(--rz-base-300)";
 
     PostMetadata? PostMetadata { get; set; }
 

@@ -1,3 +1,8 @@
+# v0.1.4
+
+- Feature: Configurable line-height for text (default is now 2.0)
+- Feature: Improve styling of `<code>` and `<pre>` blocks
+
 # v0.1.3
 
 - Feature: RSS feeds available at `/feed` and `/feed/tag`
